@@ -33,7 +33,7 @@ static int fcomp(const void *_a, const void *_b);
 int main(int argc, char **argv)
 {
     int opt;
-    int i, j, it = 0;
+    int i, j, it = 0, sols = 0;
 
     /* parse options */
     while ((opt = getopt(argc, argv, "t:v")) != EOF) {
@@ -57,6 +57,9 @@ int main(int argc, char **argv)
     }
 
     i = 0; j = n_numbers-1;
+    if (verbose) {
+        fprintf(stderr, F("begin [i=0], <j=%d>\n"), j);
+    }
     while (i < j) {
         int sum = array[i] + array[j];
         it++;
@@ -71,7 +74,7 @@ int main(int argc, char **argv)
             j = next_down(array, j);
         else {
             if (verbose) {
-                fprintf(stderr, F("Iter#%03d:      *** SOLVED FOR %d + %d = %d ***\n"),
+                fprintf(stderr, F("Iter#%03d:      \033[1;33m*** SOLVED FOR %d + %d = %d ***\033[0m\n"),
                         it, array[i], array[j], sum);
             } else {
                 print_array(stdout, array, n_numbers,
@@ -80,8 +83,14 @@ int main(int argc, char **argv)
             }
             i = next_up(array, n_numbers, i);
             j = next_down(array, j);
+            sols++;
         }
     } /* while */
+    if (sols) {
+        printf(F("%d solutions\n"), sols);
+    } else {
+        print_array(stdout, array, n_numbers, i, j, F("  (no solutions)   :"));
+    }
 } /* main */
 
 static void print_array(
@@ -98,7 +107,7 @@ static void print_array(
     va_end(args);
     for (i = 0; i < nelem; i++)
         fprintf(out,
-                i == l ? "[%d]" : i == r ? "<%d>" : " %d ",
+                i == l ? "\033[36m[%d]\033[0m" : i == r ? "\033[32m<%d>\033[0m" : " %d ",
                 array[i]);
     fprintf(out, "\n");
 } /* print_array */
