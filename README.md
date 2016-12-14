@@ -1,8 +1,8 @@
 ## Program to solve a simplified Knapsack problem.
 
 The target of this game is to read a list of numbers and
-a target sum, and try to find two numbers in the list that
-satisfy the addition.
+a target sum, and try to find **two numbers** in the list that
+satisfy the addition to target requirement.
 
 The program operates by sorting the list as doing this way
 we can follow a direct algorithm that allows to discard
