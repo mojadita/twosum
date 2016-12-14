@@ -13,6 +13,22 @@
 #define F(x) __FILE__":%d:%s: " x, __LINE__, __func__
 #define MAX         100000
 
+#ifndef COLOR
+#define COLOR 1
+#endif
+
+#if COLOR
+#  define LEFT_POINTER_FMT  "\033[36m[%d]\033[0m"
+#  define RIGHT_POINTER_FMT "\033[32m<%d>\033[0m"
+#  define NO_POINTER_FMT    " %d "
+#  define SOLVED_FMT        "Iter#%03d:      \033[1;33m*** SOLVED FOR %d + %d = %d ***\033[0m\n"
+#else
+#  define LEFT_POINTER_FMT  "[%d]"
+#  define RIGHT_POINTER_FMT "<%d>"
+#  define NO_POINTER_FMT    " %d "
+#  define SOLVED_FMT        "Iter#%03d:      *** SOLVED FOR %d + %d = %d ***\n"
+#endif
+
 int target = 0;
 int verbose = 0;
 
@@ -47,18 +63,18 @@ int main(int argc, char **argv)
         n_numbers++;
 
     if (verbose) {
-        print_array(stderr, array, n_numbers, -1, -1, F("before qsort():"));
+        print_array(stderr, array, n_numbers, -1, -1, F("* before qsort() **:"));
     }
 
     qsort(array, n_numbers, sizeof array[0], fcomp);
 
     if (verbose) {
-        print_array(stderr, array, n_numbers, -1, -1, F("after  qsort():"));
+        print_array(stderr, array, n_numbers, -1, -1, F("* after  qsort() **:"));
     }
 
     i = 0; j = n_numbers-1;
     if (verbose) {
-        fprintf(stderr, F("begin [i=0], <j=%d>\n"), j);
+        fprintf(stderr, F("begin i -> "LEFT_POINTER_FMT", j -> "RIGHT_POINTER_FMT"\n"), array[i], array[j]);
     }
     while (i < j) {
         int sum = array[i] + array[j];
@@ -74,7 +90,7 @@ int main(int argc, char **argv)
             j = next_down(array, j);
         else {
             if (verbose) {
-                fprintf(stderr, F("Iter#%03d:      \033[1;33m*** SOLVED FOR %d + %d = %d ***\033[0m\n"),
+                fprintf(stderr, F(SOLVED_FMT),
                         it, array[i], array[j], sum);
             } else {
                 print_array(stdout, array, n_numbers,
@@ -107,7 +123,7 @@ static void print_array(
     va_end(args);
     for (i = 0; i < nelem; i++)
         fprintf(out,
-                i == l ? "\033[36m[%d]\033[0m" : i == r ? "\033[32m<%d>\033[0m" : " %d ",
+                i == l ? LEFT_POINTER_FMT : i == r ? RIGHT_POINTER_FMT : NO_POINTER_FMT,
                 array[i]);
     fprintf(out, "\n");
 } /* print_array */
