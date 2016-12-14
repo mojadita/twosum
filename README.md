@@ -22,11 +22,15 @@ to test it.
 
 `twosum` uses the following options:
 
+    twosum [ ... options ]
+
 * **-v**, to produce a trace of the iterations the algorithm is
 doing.
 * **-t** _target_, to indicate the target sum to pursue.
 
 `generator`, on the other side uses the following options:
+
+    generator [ ... options ]
 
 * **-n** _number_, to fix the number of random numbers to generate.
 * **-m** _number_, to fix the minimum random value to generate.
