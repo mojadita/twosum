@@ -79,7 +79,7 @@ int main(int argc, char **argv)
     while (i < j) {
         int sum = array[i] + array[j];
         it++;
-        if (verbose) {
+        if (verbose && sum != target) {
             print_array(stderr, array, n_numbers,
                     i, j,
                     F("Iter#%03d: sum = %3d:"), it, sum);
@@ -89,13 +89,12 @@ int main(int argc, char **argv)
         else if (sum > target)
             j = next_down(array, j);
         else {
+            print_array(stdout, array, n_numbers,
+                    i, j,
+                    F("Iter#%03d: sum = %3d:"), it, sum);
             if (verbose) {
-                fprintf(stderr, F(SOLVED_FMT),
+                fprintf(stdout, F(SOLVED_FMT),
                         it, array[i], array[j], sum);
-            } else {
-                print_array(stdout, array, n_numbers,
-                        i, j,
-                        F("Iter#%03d: sum = %3d:"), it, sum);
             }
             i = next_up(array, n_numbers, i);
             j = next_down(array, j);
