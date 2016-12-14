@@ -20,6 +20,7 @@ int array[MAX];
 int n_numbers = 0;
 
 static void print_array(
+        FILE *out,
         int array[], int nelem,
         int l, int r,
         const char *fmt, ...);
@@ -46,30 +47,37 @@ int main(int argc, char **argv)
         n_numbers++;
 
     if (verbose) {
-        print_array(array, n_numbers, -1, -1, F("before qsort():\n"));
+        print_array(stderr, array, n_numbers, -1, -1, F("before qsort():"));
     }
 
     qsort(array, n_numbers, sizeof array[0], fcomp);
 
     if (verbose) {
-        print_array(array, n_numbers, -1, -1, F("after qsort():\n"));
+        print_array(stderr, array, n_numbers, -1, -1, F("after  qsort():"));
     }
 
     i = 0; j = n_numbers-1;
     while (i < j) {
         int sum = array[i] + array[j];
+        it++;
         if (verbose) {
-            print_array(array, n_numbers,
+            print_array(stderr, array, n_numbers,
                     i, j,
-                    F("Iter#%03d: sum = %3d:"), ++it, sum);
+                    F("Iter#%03d: sum = %3d:"), it, sum);
         }
         if (sum < target)
             i = next_up(array, n_numbers, i);
         else if (sum > target)
             j = next_down(array, j);
         else {
-            printf(F("solved for %d + %d = %d\n"),
-                    array[i], array[j], sum);
+            if (verbose) {
+                fprintf(stderr, F("Iter#%03d:      *** SOLVED FOR %d + %d = %d ***\n"),
+                        it, array[i], array[j], sum);
+            } else {
+                print_array(stdout, array, n_numbers,
+                        i, j,
+                        F("Iter#%03d: sum = %3d:"), it, sum);
+            }
             i = next_up(array, n_numbers, i);
             j = next_down(array, j);
         }
@@ -77,6 +85,7 @@ int main(int argc, char **argv)
 } /* main */
 
 static void print_array(
+        FILE *out,
         int array[], int nelem,
         int l, int r,
         const char *fmt, ...)
@@ -85,13 +94,13 @@ static void print_array(
     int i;
 
     va_start(args, fmt);
-    vfprintf(stderr, fmt, args);
+    vfprintf(out, fmt, args);
     va_end(args);
     for (i = 0; i < nelem; i++)
-        fprintf(stderr,
+        fprintf(out,
                 i == l ? "[%d]" : i == r ? "<%d>" : " %d ",
                 array[i]);
-    fprintf(stderr, "\n");
+    fprintf(out, "\n");
 } /* print_array */
 
 static int next_up(int array[], int nelem, int ix)
