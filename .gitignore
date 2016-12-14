@@ -1,0 +1,4 @@
+twosum
+generator
+*.o
+.depend
